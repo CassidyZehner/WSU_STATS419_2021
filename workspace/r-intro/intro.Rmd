@@ -25,6 +25,7 @@ if(which.github == "remote")
 ```
 
 
+This function calculates how many handshakes, h, will be had in a group of n people. It plots n points, equally spaced, and creates a fully connected graph of them by connecting segments to each point. The handShake function calculates h. A for loop iterates from 2:n to graph points and connect them with segments. The for loop begins at 2 because for 1, there are zero handshakes (n=1 --> h=0).
 # Handshake
 ```{r}
 library(plotrix)
@@ -72,6 +73,13 @@ handShake = function(n=1, plotMe = FALSE)
 }
 ```
 
+```{r}
+handShake(6,TRUE)
+```
+
+
+
+This function breaks down the number of characters (a-z and "other") in the first draft of the declaration and the final draft. It does so by first removing all the spaces from the document, then ensuring that all letters are lowercase. At this point, it cycles through a built in function of "letters" and removes them from the document as it counts. For example, it begins with the letter "a" and counts. It then removes all the a's and moves on to the letter b. Finally, it counts the remaining characters, such as "!" or "?", and sorts them into other. It outputs a data frame of counts for each letter. Then, a bar graph is created for both the final and draft counts and the data is represented as what fraction of the total each letter takes up. 
 # Alphabet Declaration of Independence
 ```{r}
 
@@ -121,6 +129,11 @@ barplot(propMatrix, main="Occurrence of letters in draft and final of Declaratio
 ```
 
 
+
+
+
+
+This function returns the determinant of a matrix, which determines the area/volume between vectors. If the value is zero, then it means that the vectors overlap and the volume of whatever shape they hold is zero. 
 # Determinant of 3x3 matrix
 
 ```{r}
