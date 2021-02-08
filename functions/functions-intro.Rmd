@@ -1,6 +1,8 @@
 ---
 title: "Functions-R"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 This notebook serves the purpose of holding the functions that have been created within the
 class. Each function will have a descriptive name such that is may be understood
