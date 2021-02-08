@@ -13,15 +13,15 @@ which.github = "local";  # local ... remote
 github.local = "C:/_git_/github/CassidyZehner/WSU_STATS419_2021/";
 github.remote = "https://raw.https://github.com/CassidyZehner/WSU_STATS419_2021/";
 
-# if(which.github == "remote")
-#   {
-#   include.me = paste0( github.remote, "functions/functions-intro.R");
-#   library(devtools);
-#   source_url(include.me);
-#   } else {
-#           include.me = paste0( github.local, "functions/functions-intro.R");
-#           source(include.me);
-#           }
+if(which.github == "remote")
+  {
+  include.me = paste0( github.remote, "functions/functions-intro.R");
+  library(devtools);
+  source_url(include.me);
+  } else {
+          include.me = paste0( github.local, "functions/functions-intro.R");
+          source(include.me);
+          }
 ```
 
 
@@ -33,25 +33,39 @@ is.wholenumber = function(x, tol = .Machine$double.eps^0.5)
 {
   abs(x - round(x)) < tol
 }
-handShake = function(n=1, plotMe =FALSE)
+handShake = function(n=1, plotMe = FALSE)
 {
   if(n < 1) {stop("n must have a value of at least 1");}
   if(!is.wholenumber(n)) {stop("n must be an integer");}
   h = n*(n-1)/2;
-  if(plotMe) 
+ if(plotMe) 
      {
      r = n
-     plot(0,0,xlim=c(-n-1,n+1), ylim=c(-n-1,n+1), main=paste0(h," handshakes for ",n," people"), xlab="", ylab="", xaxt="n", yaxt="n",bty="n", asp=1);
-     draw.circle(0,0,n,n+100);
-     #draw.circle(0,0,n,n);
-     #points(0,r, pch=16)
-     #plot(r*sin(theta),r*cos(theta));
-     #handshake.points = data.matrix(a = 1:n, b = )
-     for(i in 1:n){
+     plot(0,0,type = "n",xlim=c(-n-1,n+1), ylim=c(-n-1,n+1), main=paste0(h," handshakes for ",n," people"), xlab="", ylab="", xaxt="n", yaxt="n",bty="n", asp = 1);
+     x = y = NULL;
+     xs = ys = c();
+     points(x,y);
+     xs = c(xs,x);
+     ys = c(ys,y);
+     xn = yn = NULL
+     for(i in 1:n)
+       {
         deg = 360/n;
         theta = 2*pi*deg/360;
-        plot(r*sin(i*theta),r*cos(i*theta), pch=16, )
-        lines(r*sin(i*theta), r*cos(i*theta), type="l")
+        xn = r*sin(i*theta);
+        yn = r*cos(i*theta);
+        points(xn,yn);
+        x = xn;
+        y = yn;
+        xs = c(xs,x);
+        ys = c(ys,y);
+     }
+     for (source in 1:n)
+     {
+       for(target in 1:n)
+       {
+         segments(xs[source],ys[source],xs[target],ys[target])
+       }
      }
   }
  h;
