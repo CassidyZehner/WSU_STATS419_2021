@@ -1,12 +1,15 @@
 ---
-title: 'R Notebook example: Hello World'
-name: "PUT --YOUR NAME-- HERE"
-email: "PUT --your_wsu_email@wsu.edu-- HERE"
+title: 'Hello World'
+name: "Cassidy Zehner"
+email: "cassidy.zehner@wsu.edu"
 output:
   html_document
 ---
 
 # What is a library?
+
+A library is a compilation of previously written functions or data that can be added to a file or application and called at any point after installation. It helps to simplify coding since you won't have to write everything on your own. For example, there is a library "plotrix" that brings in pre-built functions that will help to make a nice plot from data. 
+
 ```{r}
 # Cntrl-Alt-I is your friend
 
