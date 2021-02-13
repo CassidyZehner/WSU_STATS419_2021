@@ -1,0 +1,170 @@
+---
+title: 'R Notebook: Intro'
+author: "Cassidy Zehner [cassidy.zehner]"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+# github.cassidy
+which.github = "local";  # local ... remote 
+
+github.local = "C:/_git_/github/CassidyZehner/WSU_STATS419_2021/";
+github.remote = "https://raw.https://github.com/CassidyZehner/WSU_STATS419_2021/";
+
+if(which.github == "remote")
+  {
+  include.me = paste0( github.remote, "functions/functions-intro.R");
+  library(devtools);
+  source_url(include.me);
+  } else {
+          include.me = paste0( github.local, "functions/functions-intro.R");
+          source(include.me);
+          }
+```
+
+
+This function calculates how many handshakes, h, will be had in a group of n people. It plots n points, equally spaced, and creates a fully connected graph of them by connecting segments to each point. The handShake function calculates h. A for loop iterates from 2:n to graph points and connect them with segments. The for loop begins at 2 because for 1, there are zero handshakes (n=1 --> h=0).
+# Handshake
+```{r}
+library(plotrix)
+library(pracma)
+is.wholenumber = function(x, tol = .Machine$double.eps^0.5)
+{
+  abs(x - round(x)) < tol
+}
+handShake = function(n=1, plotMe = FALSE)
+{
+  if(n < 1) {stop("n must have a value of at least 1");}
+  if(!is.wholenumber(n)) {stop("n must be an integer");}
+  h = n*(n-1)/2;
+ if(plotMe) 
+     {
+     r = n
+     plot(0,0,type = "n",xlim=c(-n-1,n+1), ylim=c(-n-1,n+1), main=paste0(h," handshakes for ",n," people"), xlab="", ylab="", xaxt="n", yaxt="n",bty="n", asp = 1);
+     x = y = NULL;
+     xs = ys = c();
+     points(x,y);
+     xs = c(xs,x);
+     ys = c(ys,y);
+     xn = yn = NULL
+     for(i in 1:n)
+       {
+        deg = 360/n;
+        theta = 2*pi*deg/360;
+        xn = r*sin(i*theta);
+        yn = r*cos(i*theta);
+        points(xn,yn);
+        x = xn;
+        y = yn;
+        xs = c(xs,x);
+        ys = c(ys,y);
+     }
+     for (source in 1:n)
+     {
+       for(target in 1:n)
+       {
+         segments(xs[source],ys[source],xs[target],ys[target])
+       }
+     }
+  }
+ h;
+}
+```
+
+```{r}
+handShake(6,TRUE)
+```
+
+
+
+This function breaks down the number of characters (a-z and "other") in the first draft of the declaration and the final draft. It does so by first removing all the spaces from the document, then ensuring that all letters are lowercase. At this point, it cycles through a built in function of "letters" and removes them from the document as it counts. For example, it begins with the letter "a" and counts. It then removes all the a's and moves on to the letter b. Finally, it counts the remaining characters, such as "!" or "?", and sorts them into other. It outputs a data frame of counts for each letter. Then, a bar graph is created for both the final and draft counts and the data is represented as what fraction of the total each letter takes up. 
+# Alphabet Declaration of Independence
+```{r}
+
+countLetterInString = function(str, letter)
+{
+  nchar(as.character(str)) -nchar( gsub(letter, "", str, fixed=TRUE))
+}
+
+AlphabetCounter = function(str)
+{
+  str = gsub("[[:space:]]", "", str)
+  str = tolower(str)
+  df = data.frame(matrix(0, nrow=1, ncol=27, byrow=TRUE))
+  colnames(df) = c(letters,"OTHER")
+  for(letter in letters)
+  {
+    idx = which(letters == letter)
+    df[1,idx] = countLetterInString(str,letter)
+    str = gsub(letter,"",str,fixed=TRUE)
+  }
+  
+  df[1,27] = nchar(str)
+  df;
+}
+```
+
+```{r}
+path.declaration = paste0(github.local,"datasets/declaration/");
+final = readChar(paste0(path.declaration,"final.txt"), 99999)
+draft = readChar(paste0(path.declaration,"draft.txt"), 99999)
+
+df = NULL;
+df = rbind(df,AlphabetCounter(draft))
+df = rbind(df,AlphabetCounter(final))
+rownames(df) = c("draft","final")
+```
+
+```{r}
+prop = df; #proportion
+prop[1,] = prop[1,]/sum(prop[1,]);
+prop[2,] = prop[2,]/sum(prop[2,]);
+rowSums(prop);
+propMatrix = data.matrix(prop, rownames.force = NA)
+barplot(propMatrix, main="Occurrence of letters in draft and final of Declaration",
+  xlab="Occurrence fraction by letter", col=c("darkblue","red"),
+  legend = rownames(prop), beside=TRUE)
+```
+
+
+
+
+
+
+This function returns the determinant of a matrix, which determines the area/volume between vectors. If the value is zero, then it means that the vectors overlap and the volume of whatever shape they hold is zero. 
+# Determinant of 3x3 matrix
+
+```{r}
+ComputeDeterminate3=function(myMatrix)
+{
+  nrow=nrow(myMatrix);
+  ncol=ncol(myMatrix);
+  if (nrow != ncol)
+  {stop("The matrix must be square to compute the determinant");}
+  if (nrow != 3)
+  {stop("The matrix must be 3 by 3");}
+  a=myMatrix[1,1];
+  b=myMatrix[1,2];
+  c=myMatrix[1,3];
+  d=myMatrix[2,1];
+  e=myMatrix[2,2];
+  f=myMatrix[2,3];
+  g=myMatrix[3,1];
+  h=myMatrix[3,2];
+  i=myMatrix[3,3];
+  
+  # https://crypto.interactive-maths.com/hill-cipher.html
+  (a*(e*i-f*h))-(b*(d*i-f*g))+(c*(d*h-e*g))
+}
+```
+
+```{r}
+myMatrix=matrix(c(1,2,3,
+                  4,5,6,
+                  7,8,9), nrow=3, byrow=FALSE)
+det(myMatrix)
+ComputeDeterminate3(myMatrix)
+```
+
