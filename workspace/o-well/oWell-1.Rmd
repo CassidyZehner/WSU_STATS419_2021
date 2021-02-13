@@ -5,10 +5,12 @@ output: html_notebook
 ---
 # Setup Folder Structure
 ```{r}
-which.github = "local";  # local ... remote 
+which.github = "remote";  # local ... remote 
 
 github.local = "C:/_git_/github/CassidyZehner/WSU_STATS419_2021/";
-github.remote = "https://github.com/CassidyZehner/WSU_STATS419_2021/tree/HEAD/";
+github.remote = "https://raw.githubusercontent.com/CassidyZehner/WSU_STATS419_2021/main/";
+
+#https://raw.githubusercontent.com/CassidyZehner/WSU_STATS419_2021/main/workspace/o-well/data/well.txt
 
 if(which.github == "remote")
   {
@@ -46,9 +48,14 @@ owell.chemistry$longitude = well.location$longitude;
 owell.chemistry$altitude.ft = well.location$altitude.ft;
 owell.chemistry$fault = well.location$fault;
 owell.chemistry$geology = well.location$geology;
+#?merge
+wells = list();
+	wells$saudi = list();
+	wells$saudi$metals = owell.metals;
+	wells$saudi$chemistry = owell.chemistry
 
-mylist = list(owell.chemistry,owell.metals)
-names(mylist) = c("wells$saudi$chemistry","wells$saudi$metals")
+# mylist = list(owell.chemistry,owell.metals)
+# names(mylist) = c("wells$saudi$chemistry","wells$saudi$metals")
 ```
 
 ```{r}
@@ -69,9 +76,9 @@ readFromPipe = function(file, header=TRUE, quote="", sep="|")
 if(which.github != "remote")
 {
 myfile = paste0(path.data,"well.rds")
-saveRDS(mylist,file = myfile)
+saveRDS(wells,file = myfile)
 myfile = paste0(path.data,"well.txt")
-storeToPipe(mylist,file = myfile)
+storeToPipe(wells,file = myfile)
 } else {
  myfile = paste0(path.data,"well.txt")
  print(myfile)
