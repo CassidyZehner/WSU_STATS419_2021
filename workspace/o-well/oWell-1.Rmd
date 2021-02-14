@@ -10,7 +10,7 @@ which.github = "remote";  # local ... remote
 github.local = "C:/_git_/github/CassidyZehner/WSU_STATS419_2021/";
 github.remote = "https://raw.githubusercontent.com/CassidyZehner/WSU_STATS419_2021/main/";
 
-#https://raw.githubusercontent.com/CassidyZehner/WSU_STATS419_2021/main/workspace/o-well/data/well.txt
+
 
 if(which.github == "remote")
   {
@@ -26,7 +26,7 @@ if(which.github == "remote")
 ```
 
 # Read in Data
-(explain)
+The data within the data frames below, "owell.metals" and "owell.chemistry" was taken from a provided pdf file, "wells-23". The data was copied from page 773 and 774, respectively, and put into a word document such that it would retain its tabular structure. From there, the data was copied into a notepad++ and read into R as a text delimited file. The data frame "well.location" was done a similar way, except that data was already provided in the form a .txt file. Two columns were manually appended, with information on the well geology and the distance of each well from a fault line. This data was taken from page 770 of the pdf. 
 ```{r}
 path.data = paste0(mypath, "data/")
 owell.metals = read.delim(paste0(path.data,"table1.txt"),header=TRUE,sep="");
@@ -35,20 +35,23 @@ well.location = read.delim(paste0(path.data,"wells-location.txt"),header=TRUE,se
 ```
 
 #Build one data object
-(explain)
+This portion of code take the well.location data frame and appends it to the other data frames, owell.metals and owell.chemistry. This is done using the "cbind" function within R. It takes the columns and adds them to the columns of the specified data frame. Finally, it creates a list with the title of "wells", within the list is a sublist titled "Saudi" where the two data frames are stored for later use and comparison. 
 ```{r}
-owell.metals$latitude = well.location$latitude;
-owell.metals$longitude = well.location$longitude;
-owell.metals$altitude.ft = well.location$altitude.ft;
-owell.metals$fault = well.location$fault;
-owell.metals$geology = well.location$geology;
+# owell.metals$latitude = well.location$latitude;
+# owell.metals$longitude = well.location$longitude;
+# owell.metals$altitude.ft = well.location$altitude.ft;
+# owell.metals$fault = well.location$fault;
+# owell.metals$geology = well.location$geology;
+# 
+# owell.chemistry$latitude = well.location$latitude;
+# owell.chemistry$longitude = well.location$longitude;
+# owell.chemistry$altitude.ft = well.location$altitude.ft;
+# owell.chemistry$fault = well.location$fault;
+# owell.chemistry$geology = well.location$geology;
 
-owell.chemistry$latitude = well.location$latitude;
-owell.chemistry$longitude = well.location$longitude;
-owell.chemistry$altitude.ft = well.location$altitude.ft;
-owell.chemistry$fault = well.location$fault;
-owell.chemistry$geology = well.location$geology;
-#?merge
+owell.metals = cbind(owell.metals, well.location);
+owell.chemistry = cbind(owell.chemistry, well.location);
+
 wells = list();
 	wells$saudi = list();
 	wells$saudi$metals = owell.metals;
@@ -58,6 +61,9 @@ wells = list();
 # names(mylist) = c("wells$saudi$chemistry","wells$saudi$metals")
 ```
 
+
+# Storing or Reading
+This portion of the code takes the data frame and either stores it or reads it depending on which function is called. 
 ```{r}
 storeToPipe = function(df, file, header=TRUE, quote="", sep="|", row.names=FALSE)
   {
@@ -72,16 +78,17 @@ readFromPipe = function(file, header=TRUE, quote="", sep="|")
 ```
 
 # Save data list to file
+This function determines the way that the data will be output. If the path is the local github, then the rds and .txt file will be saved to the folder. If the path is anything else, then the location of the file will be printed. 
 ```{r}
 if(which.github != "remote")
 {
-myfile = paste0(path.data,"well.rds")
-saveRDS(wells,file = myfile)
-myfile = paste0(path.data,"well.txt")
-storeToPipe(wells,file = myfile)
+myfile = paste0(path.data,"well.rds");
+saveRDS(wells,file = myfile);
+myfile = paste0(path.data,"well.txt");
+storeToPipe(wells,file = myfile);
 } else {
- myfile = paste0(path.data,"well.txt")
- print(myfile)
+ myfile = paste0(path.data,"well.txt");
+ print(myfile);
 }
 
 ```
