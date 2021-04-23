@@ -1,0 +1,174 @@
+
+# Setup Folder Structure
+```{r}
+which.github = "remote";  # local ... remote 
+
+github.local = "C:/_git_/github/CassidyZehner/WSU_STATS419_2021/";
+github.remote = "https://raw.githubusercontent.com/CassidyZehner/WSU_STATS419_2021/main/";
+
+
+
+if(which.github == "remote")
+  {
+  mypath = paste0(github.remote,"/workspace/o-well/")
+  # include.me = paste0( github.remote, "functions/functions-intro.R");
+  # library(devtools);
+  # source_url(include.me);
+  } else {
+          mypath= paste0(github.local,"/workspace/o-well/")
+          # include.me = paste0( github.local, "functions/functions-intro.R");
+          # source(include.me);
+          }
+```
+
+# Read in Data
+The data within the data frames below, "owell.metals" and "owell.chemistry" was taken from a provided pdf file, "wells-23". The data was copied from page 773 and 774, respectively, and put into a word document such that it would retain its tabular structure. From there, the data was copied into a notepad++ and read into R as a text delimited file. The data frame "well.location" was done a similar way, except that data was already provided in the form a .txt file. Two columns were manually appended, with information on the well geology and the distance of each well from a fault line. This data was taken from page 770 of the pdf. 
+```{r}
+path.data = paste0(mypath, "data/")
+owell.metals = read.delim(paste0(path.data,"table1.txt"),header=TRUE,sep="");
+owell.chemistry = read.delim(paste0(path.data,"table2.txt"),header=TRUE,sep="");
+well.location = read.delim(paste0(path.data,"wells-location.txt"),header=TRUE,sep="|");
+```
+
+#Build one data object
+This portion of code take the well.location data frame and appends it to the other data frames, owell.metals and owell.chemistry. This is done using the "cbind" function within R. It takes the columns and adds them to the columns of the specified data frame. Finally, it creates a list with the title of "wells", within the list is a sublist titled "Saudi" where the two data frames are stored for later use and comparison. 
+```{r}
+# owell.metals$latitude = well.location$latitude;
+# owell.metals$longitude = well.location$longitude;
+# owell.metals$altitude.ft = well.location$altitude.ft;
+# owell.metals$fault = well.location$fault;
+# owell.metals$geology = well.location$geology;
+# 
+# owell.chemistry$latitude = well.location$latitude;
+# owell.chemistry$longitude = well.location$longitude;
+# owell.chemistry$altitude.ft = well.location$altitude.ft;
+# owell.chemistry$fault = well.location$fault;
+# owell.chemistry$geology = well.location$geology;
+
+owell.metals = cbind(owell.metals, well.location);
+owell.chemistry = cbind(owell.chemistry, well.location);
+
+wells = list();
+	wells$saudi = list();
+	wells$saudi$metals = owell.metals;
+	wells$saudi$chemistry = owell.chemistry
+
+# mylist = list(owell.chemistry,owell.metals)
+# names(mylist) = c("wells$saudi$chemistry","wells$saudi$metals")
+```
+
+
+# Storing or Reading
+This portion of the code takes the data frame and either stores it or reads it depending on which function is called. 
+```{r}
+storeToPipe = function(df, file, header=TRUE, quote="", sep="|", row.names=FALSE)
+  {
+  if(quote == "") { quote = FALSE; }
+  utils::write.table(df, file=file, quote=quote, col.names=header, row.names=row.names, sep=sep);
+  }
+
+readFromPipe = function(file, header=TRUE, quote="", sep="|")
+  {
+  utils::read.csv(file, header=header, quote=quote, sep=sep);
+  }
+```
+
+# Save data list to file
+This function determines the way that the data will be output. If the path is the local github, then the rds and .txt file will be saved to the folder. If the path is anything else, then the location of the file will be printed. 
+```{r}
+if(which.github != "remote")
+{
+myfile = paste0(path.data,"well.rds");
+saveRDS(wells,file = myfile);
+myfile = paste0(path.data,"well.txt");
+storeToPipe(wells,file = myfile);
+} else {
+ myfile = paste0(path.data,"well.txt");
+ print(myfile);
+}
+
+```
+
+
+# One Large Dataframe
+This small chunk of text combines the two data frames into one large data frame called Saudi. The last 5 columns of owell.metals have been omitted since there are exactly what the last 5 columns of owell.chemistry contains. After that, a .txt file is created for the data frame. 
+```{r}
+saudi = cbind(owell.chemistry, owell.metals[1:15]);
+write.table(saudi,"saudi.txt",sep="\t",row.names=TRUE)
+```
+
+# Statistical Analysis
+This section of code contains some of the statistical analysis that is performed on the data. First a summary of the data is performed in order to determine the difference in the values across the 23 wells. This provides a very broad analysis of the data, with the mean, median, and quartile values being calculated for each individual column. The min and max are calculated as well. 
+```{r}
+summary(saudi, digits = 2)
+```
+
+I generated box plots of each of the chemicals listed in the saudi data frame. At this point, I am troubleshooting how I can add the names of each corresponding column to their respective graphs. 
+```{r}
+n=20;
+for(i in 1:n)
+{
+  boxplot(saudi[,i])
+}
+```
+
+
+# Correlation Plots
+The next data analysis performed is a correlation analysis between the various chemicals and metals and the latitude, longitude, and altitude information. This will quickly provide an understanding into what variables are related, so that a more detailed analysis can be performed on them. 
+
+Of the most noticeable correlations:
+
+Fault lines are most closely related to latitude (0.46) and significantly less closely related to longitude (0.12). There was also a strong positive correlation between copper and fault lines (0.62). I have found a research paper for later use to delve into this possible relation. Since fault distance was estimated and entered in manually, I would say the data has less value overall. https://scialert.net/fulltext/?doi=rjes.2010.414.420
+
+Altitude of the well is closely related to the presence of Boron (B) with a value of -0.54 in the metals section. In terms of chemicals, altitude is negatively related to Potassium, K. (-0.60)
+
+```{r}
+
+library(corrplot)
+library(RColorBrewer)
+
+correlation.chemistry <-cor(saudi[,c(1:24)]);
+corrplot(correlation.chemistry, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"));
+
+
+correlation.metals <-cor(saudi[,c(21:24,26:40)]);
+corrplot(correlation.metals, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"));
+
+metals.chemistry <-cor(saudi[,c(1:20,26:40)]);
+corrplot(metals.chemistry, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"));
+
+```
+
+At this point, it seems reasonable to plot the variables that are correlated to one another such that the trend can be visualized. To begin, I wanted to plot Boron and Potassium as a function of altitude. The data shows that as the height continues to increase, the availability of Boron and Potassium decrease. If this is an desired attribute, then it is logical that the wells be built higher. 
+
+```{r}
+plot(saudi$altitude.ft,saudi$B,main="Boron in wells as a function of altitude", pch =5, col="blue", xlab="Well Altitude [feet]",ylab="Boron [micrograms/L]")
+
+plot(saudi$altitude.ft,saudi$K,main="Potassium in wells as a function of altitude", pch =5, col="purple", xlab="Well Altitude [feet]",ylab="Potassium [milligrams/L]")
+
+```
+
+The graph for copper and fault line relation is below. As mentioned above, this data doesn't seem entirely relevant since it was me who manually entered the data after reading it from the "Wells-23" pdf. From the graph, there is quite evidently a large jump in the data and there are no entries for a distance of 2000-6000 meters. If the data were provided, and therefore hopefully more accurate, I would be more likely to make a conclusion about copper and fault line distance. It is interesting that the amount of copper increases as fault line distance increases, making the interesting notion that copper does not exist in a large amount near a fault line. 
+```{r}
+plot(saudi$fault,saudi$Cu,main="Copper as a function of Well Fault Line Distance", pch =5, col="black", xlab="Well Distance from Fault Line [meters]",ylab="Copper Amount [milligrams/L")
+```
+
+In the bar plot below, generated by ggplot2, we can see the geology of each well. Sand appears to be the most common, but there is quite a few wells with a mix of volcanic and something else, so the data is skewed. I need to work out a way to improve this plot and separate the geology type. However, this plot is interesting as it allows the possibility of seeing what mixes are more common and which aren't. As with the fault line distance, this data may be less valuable because of the fact that it was entered manually and read from a small image from the "Wells-23" pdf. Considering the terrain of the area, it is logical that some of the a portion of the wells are on sand. I think the more interesting placement is the volcanic placement. I believe this soil is very rich in minerals so that may be why. Volcanic soil contains a lot of iron, potassium, At this point, I want to look at geology and how it relates to minerals. 
+```{r}
+library(ggplot2)
+ggplot(owell.chemistry, aes(y=geology))+
+  geom_bar(fill="darkblue")
+```
+
+The data is significantly skewed by the single data point with a value of 93. This value occurs in a region of sand and so this value is not expected. There is certainly some more analysis that could be done with this, or it could possibly be a reporting mistake. 
+```{r}
+plot(saudi$longitude,saudi$Fe,main="Iron Deposit as a function of Longitude", pch =16, col="red", xlab="Longitude [degrees]",ylab="Iron Amount [milligrams/L")
+```
+
+A similar phenomenon can be seen with the sodium deposit, but it does not occur at the same well. 
+```{r}
+plot(saudi$longitude,saudi$Na,main="Iron Deposit as a function of Longitude", pch =16, col="red", xlab="Longitude [degrees]",ylab="Sodium Amount [milligrams/L")
+```

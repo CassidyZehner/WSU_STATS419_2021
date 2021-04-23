@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r echo = FALSE, comment=NA}
+nutrients = read.csv("C:/_git_/data/new class/nndb.csv", header=TRUE)
+```
+
+
+#Question 1
+## K-mean Clustering
+
+The data below shows that when clustering the nutrients data, using 5 is better than using 10 clusters. This can be shown by looking at the Sum of Squares Error (SSE). When using 5 clusters, the SSE is relatively low, with a value of 28.9% error. Hoping to decrease this number with a larger number of clusters does not work, as the error is 48.5% when using the 10 clusters. This just says that the data is more similar and the various variables for the food groups are better when clumped into larger sections.
+
+Of the 39 numerical variables present in the data, when using 5 clusters, 0.69 of the variables are classified into the 3rd cluster. 0.07 fall into the 2nd cluster. 0.18 fall into the 4th cluster, and 0.05 fall into the 5th cluster. Based on this data, it appears the overall number of clusters should actually be minimized considering that none fall into the first cluster, and a large marjority fall into the third cluster.
+```{r echo = FALSE, comment=NA}
+X <- scale(nutrients[,5:42],
+           center = FALSE, scale = TRUE) 
+#K-mean using 5 clusters
+kmean5 = kmeans(X, centers = 5)
+```
+
+```{r}
+kmean10 = kmeans(X, centers=10)
+```
+
+#Question 2
+## Euclidian Single vs Complete
+```{r}
+dm = dist(X)
+```
+
+```{r}
+cs <- hclust(dm, method = "single");
+lab=
+y = table(X[,2],cutree(cs, h = 10))
+#table(dat[,2],lab)
+
+```
+
+
+#Question 3
+## K-mean on Principal Components
+```{r, results="HIDE"}
+correlation <- cov(nutrients[,5:42])
+
+nutrients_pcacov <- princomp(covmat = correlation)
+```
+
+```{r}
+kmean5_pc = kmeans(nutrients_pcacov, centers = 5)
+```
+

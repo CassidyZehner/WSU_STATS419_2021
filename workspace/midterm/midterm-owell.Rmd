@@ -1,0 +1,1061 @@
+---
+title: 'R Notebook midterm: 419 Survey of Multivariate Methods'
+name: "PUT --YOUR NAME-- HERE"
+email: "PUT --your_wsu_email@wsu.edu-- HERE"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    fig_caption: true
+    number_sections: false 
+---
+
+# Setup
+
+### source setup
+```{r}
+source("setup-owell.R");
+```
+
+### o well
+```{r}
+# options(digits = 4); # limit the matrix form
+str(wells.df);
+```
+
+### Default Group
+```{r}
+wells.df$Group = c(rep(1, 17), rep(2, 5), 3);
+```
+
+### = WSU COLORS =
+```{r}
+# https://brand.wsu.edu/visual/colors/
+wsu.crimson = "#981e32";
+wsu.gray    = "#717171";
+```
+
+<HR divider="5" style="border: 5px solid #981e32; border-radius: 5px;">
+
+# TESTING PROCEDURE
+ 
+This midterm exam (Rnotebook-midterm) is a learning opportunity to review the content presented **and** to assess "weekly mini-tasks".  The total points available for this "learning opportunity" is between 150-200 points as detailed in each section below.  For each question, review how much the item is worth in terms of points and plan your time wisely. 
+
+I would deem it "unwise" to spend hours on a question that is only worth 5 points.
+
+Be certain to continue to document your "work hours" in your notebook.  Especailly this week as you work on the midterm.
+
+## Static/Existing Resources Are Allowed
+ 
+This is an open-book examination.  You can use your course notebooks (digital and old-school).  You can use Internet resources (stackoverflow, Wikipedia, and Youtube).  
+
+## Dynamic/Living Resources Are _ **NOT**_  Allowed
+
+**You cannot use a living resource on the exam.**  That would include a classmate, student, sibling, parent, a tutor, online forums (where you ask the question after the exam period has begun). 
+
+## Questions?
+If you have questions that need clarifying, please **privately chat with instructor (rocket.chat)**.  Office hours will be held at normal times (and during normally scheduled class time as this is a **takehome** exam).  The instructor will help you with any technical difficulties associated with getting the notebook to function.
+
+## Deliverable
+You should move the "midterm" folder to your local workspace.  Once completed, you should move this folder into your Dropbox "deliverable" folder. 
+
+## Deadline
+The midterm should be submitted in your Dropbox account before midnight (Sunday March 3/21, vernal equinox?)
+
+## Levels of Mastery
+
+* Do You **Remember**?
+* Do You **Understand**?
+* Can You **Apply** what you remember/understand to another similar problem?
+* Can You **Analyze** and **Synthesize** Data?
+* Can You **Evaluate** your analyses?
+* Can You **Create** meaningful visualizations and summaries?  
+
+## Rubric of Mastery 
+ 
+For every 10 points, this is the general breakdown.
+ 
+| Emerging       | Developing     | Mastering    |
+| :------------- | :----------:   | -----------: |
+| 0-4            |  5-7           | 8 - 10       |
+
+
+<HR divider="5" style="border: 5px solid #981e32; border-radius: 5px;">
+
+# COURSE EXPECTATIONS (e.g., the "syllabus")
+
+## Instructor's objective (10 points)
+
+Describe how the instructor has designed this course.  Be certain to include a statement of his primary objective, summarize sub-objectives, communicate how this design is "similar to" other courses you have taken at university, and communicate how it is "different from" other courses you have taken at university.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Proportion of Statistical Methods (10 points)
+
+Statistics is defined as "the discipline that concerns the collection, organization, analysis, interpretation and presentation of data." (See <https://en.wikipedia.org/wiki/Statistics>)
+
+Are each of these five factors equally weighted?  Should they be?
+
+### What is traditionally taught at university
+
+Below, change the value of `x` to represent how you perceive "statistics" is generally taught at university based on these 5 factors:  "collection", "organization", "analysis", "interpretation", "presentation". 
+
+That is, what proportion of time is spent teaching about "data collection"?  What proportion of time is spent teaching about "data organization" (cleanup)?  And so on.
+```{r}
+x = c(20,20,20,20,20);
+
+
+x.labels = c("collection", "organization", "analysis", "interpretation", "presentation");
+x.colors = c("blue", "lightgreen", "darkgreen", "orange", "red");
+
+barplot(x, 
+        col = x.colors,
+        ylim = c(0, 20),
+        ylab = "Proportion: (Sums to 100)",
+        main="Traditional view of Statistics");
+
+
+text(1.14* (1:5), par("usr")[3], col = x.colors, labels = x.labels, srt = 45, adj = c(1.1,1.1), xpd = TRUE, cex=.75);
+```
+
+
+### How the instructor perceives statistics
+
+Below, change the value of `x` to represent how your INSTRUCTOR is trying to teach statistics (in this multivariate course) based on these 5 factors:  "collection", "organization", "analysis", "interpretation", "presentation". 
+
+```{r}
+x = c(20,20,20,20,20);
+
+
+x.labels = c("collection", "organization", "analysis", "interpretation", "presentation");
+x.colors = c("blue", "lightgreen", "darkgreen", "orange", "red");
+
+barplot(x, 
+        col = x.colors,
+        ylim = c(0, 20),
+        ylab = "Proportion: (Sums to 100)",
+        main="Instructor view of Statistics");
+
+
+text(1.14* (1:5), par("usr")[3], col = x.colors, labels = x.labels, srt = 45, adj = c(1.1,1.1), xpd = TRUE, cex=.75);
+```
+
+### How you perceive statistics
+
+Below, change the value of `x` to represent how you perceive "statistics" based on these 5 factors:  "collection", "organization", "analysis", "interpretation", "presentation".  
+
+What proportion of the time should be devoted to teaching you about "data collection"?  And so on.
+
+```{r}
+x = c(20,20,20,20,20);
+
+
+x.labels = c("collection", "organization", "analysis", "interpretation", "presentation");
+x.colors = c("blue", "lightgreen", "darkgreen", "orange", "red");
+
+barplot(x, 
+        col = x.colors,
+        ylim = c(0, 20),
+        ylab = "Proportion: (Sums to 100)",
+        main="Student view of Statistics");
+
+
+text(1.14* (1:5), par("usr")[3], col = x.colors, labels = x.labels, srt = 45, adj = c(1.1,1.1), xpd = TRUE, cex=.75);
+```
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[The entire question is worth 10 points, including the 3 visualizations.  Describe how you arrived at the proportions for each:  university tradition, instructor protocol, your personal belief.]
+
+
+
+## Learning Theory (10 points)
+
+According to experts, learning is not a "hierarchy" but rather a "nonlinear" immersion of language:  <https://www.edweek.org/education/opinion-heres-whats-wrong-with-blooms-taxonomy-a-deeper-learning-perspective/2018/03> (PDF version is in "misc" folder of this "midterm").
+
+
+### Bloom Taxonomy
+In the traditional Bloom model (see graphic referenced above), I would cluster the elements by pairing some learning elements:
+
+- [High school] Knowledge/Comprehension:  "what is the definition" and "what does it mean"
+- [Early university] Application/Analysis:  "how to apply the data" and "how to decompose the concept into subparts"
+- [Seniors at university] Synthesis/Evaluation: "how to integrate subparts or concepts" and "how to evaluate" so you are prepared to create
+
+As students in a senior-level university course, my expectations are that you can refer to modern "textbook resources" (e.g., Brother Google, Stackoverflow, Wikipedia) and perform the "lower-ordered thinking" on your own.
+
+### Learn by doing
+In my estimation, the following quote reflects how learning works:  'We remember 10% of what we "hear", 50% of what we "see", and 90% of what we "do"'.  This is the foundation of an apprenticeship model.
+
+Statistics is a language and I have chosen to immerse you in multivariate statistics by providing a "survey" of several key topics.  Simultaneously, as the instructor I join in the "practice" to demonstrate how apprenticeship works.  I provide you with a "411" on the needed tools I perceive important for you to succeed as a data analyst assessing multivariate data.  Specifically, I have stated the following in the syllabus:
+
+### Instructor Expectation
+"The real (nonacademic) world moves fast, and I need to enable you to succeed there.  My goal is to empower you, but that requires challenging you.  Some of you may struggle with the intentional nonlinearity, vaguities (vagueness, YES, I made that word up), and other quirks you may find unsettling.  The purpose is to empower you to become innovators and creators in a future I cannot predict."
+
+### Think about Thinking/Learning (Student Response)
+Process the above information and write a response expressing your opinion about how learning works.  You do not have to agree with the "expert opinion" expressed in the website/PDF.  You do not have to agree with the instructor's opinion.  You do have to coherently "think about thinking" and articulate a response.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+
+## Self-determination (10 points)
+
+My five-year old recently shared the following while we were at Myrtle Beach over winter break picking up sea-shells:  "Alex is the boss of Alex; daddy is the boss of daddy.  Is that right?" 
+
+[Today is 3/14, as in 3.14159 2653589 7923284 626 ... Alex has been taught this number in song firm at a very young age: <https://www.youtube.com/watch?v=rKq4l5CiIOo>]
+
+Utilizing details specific to the Ryan/Deci explanation of self-determination theory and intrinsic motivation, respond to the statement of my son.  Your response should demonstrate your understanding of the conversation as it relates to: (1) your natural-self personality, (2) the instructor's natural-self personality, (3) each of your team-member's natural-self personality.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="5" style="border: 5px solid #981e32; border-radius: 5px;">
+
+# Central Tendencies
+
+## Example 1
+Below is a list of the first 32 prime numbers.
+```{r}
+x = pracma::primes(135);
+length(x);
+x;
+```
+
+### mean
+
+```{r}
+mean(x);
+```
+
+### doMean
+
+```{r}
+doMean(x);
+```
+
+### median
+
+```{r}
+median(x);
+```
+
+### doMedian
+
+```{r}
+doMedian(x);
+```
+
+### Student Response (5 points)
+Based on "lecture", what is the above output demonstrating?  Of the two "central tendencies", which would John Tukey prefer?  Why would the instructor prefer the `doMean` over the `mean` and the `doMedian` over the `median`?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Example 2
+
+Let's assume 20 students are in a course.
+```{r}
+hate.group = 12;
+love.group = 8;
+
+set.seed(123); x = rnorm( hate.group, mean = -5, sd = 2);
+set.seed(456); y = rnorm( love.group, mean = 3,  sd = 1);
+
+xy = c(x,y);
+hist(xy);
+```
+
+
+
+### Student Response (5 points)
+
+By construction is this data 'bimodal'?  Is the data 'bivariate'?  Below respond to these questions **WHILE** you detail what the code is doing.  What does `set.seed` do?  How is `x` constructed with the given parameters?  How is `y` constructed with the given parameters?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+# Alphabet Soup (10 points)
+
+As a task in the course, you had to build a data-frame to compare different versions of the U.S. Declaration of Independence (original draft and final version).  Build a side-by-side visualization (**One Graphic**) below that is easy to interpret.  [I would prefer you use your own creativity but `?stars` may help some of you.]
+
+```{r}
+# -- INSERT CODE HERE --
+## LOAD THE DATA (either Github or Dropbox)
+## Show a visualization of the multivariate data.
+```
+
+Report on your analysis.  Did you scale the data?  If so, how and why?  What conclusions can you draw from the side-by-side visualization?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+# Standardized Test Scores
+
+## Example 1
+
+Student A takes an Iowa Basics Test in 1989 and scores in the 99-th percentile.
+
+Student B takes an Iowa Basics Test in 1999 and scores in the 95-th percentile.
+
+### Student Response (5 points)
+
+Is there a 100-th percentile?  How are the percentiles in a given year calculated?  What "assumption(s)" would we have to make to conclude Student A outperformed Student B?
+
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Example 2
+
+Student A takes ACT test in 1990 and scores 30 on the composite which is associated with the 97-th percentile.
+
+Student A takes ACT test in 1991 and scores 33 on the composite which is associated with the 99-th percentile.
+
+### Student Response (5 points)
+
+Did the student improve?  What assumptions would you have to make to draw that conclusion?  
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+### Student Response (5 points)
+
+- <https://blog.prepscholar.com/historical-act-percentiles-2015-2014-2013-2012-2011>
+- <https://blog.prepscholar.com/act-percentiles-high-precision>
+
+Using the "high-precision" 2021 data, what are the respective percentiles for ACT scores of 30 and 33 in 2021?  Discuss how those percentiles compare to the 1991 era.  How are they different?  Can we conclude that a student getting a 33 in 2021 is better/worse than getting a 33 in 1991?
+
+
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;"> 
+
+## Example 3
+
+Student G studies for six months and scores a composite 800 on the GMAT test in 1984 (the highest possible score).
+
+### Student Response (5 points)
+
+What percentile would Student G be placed in?  By definition, would this classify this student as a "outlier"?  Are outliers "normal or average"? 
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;"> 
+
+## Example 4
+
+Student A studies for two days and scores a composite 720 on the GMAT test in 2004 which is associated with the 97-th percentile. 
+
+### Student Response (5 points)
+
+Who performed better:  Student G or Student A?  What assumptions are you making?  How would you defend your conclusion?
+ 
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;"> 
+
+### Student Response (5 points)
+
+In summary, what are some key aspects of the standarized percentiles?  When and how should we compare percentiles across samples?  Why would John Tukey prefer a "percentile" over an "average" score?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+# Probability
+
+A division of the National Science Foundation awards grants based on a panel review.
+
+In Year X, the probability of receiving an award was 14/172.
+
+In Year Y, the probability of receiving an award was 12/161.
+
+In Year Z, the probability of receiving an award was 18/211.
+
+
+### Student Response (10 points)
+
+Assume that a grant seeker GS submitted an application in years X, Y, Z.  Compute the following probabilities:
+
+- That zero grants were awarded (0/3)
+- That one grant was awarded (1/3)
+- That two grants were awarded (2/3)
+- That three grants were awarded (3/3)
+
+```{r}
+# -- INSERT CODE HERE --
+```
+
+Be certain to carefully think about what assumptions you are making when you apply "probability calculations" to this problem.  Are those assumptions valid?
+
+In context of this problem, at what point would the grant seeker GS move from "normal" to an "outlier"?  [Decide on 0/3, 1/3, 2/3, or 3/3 and defend your answer.]
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+
+# Bivariate correlation
+Recall that in the notebook "bivariate-statistics", correlation was introduced.    
+
+### Student Response (5 points)
+
+Succinctly explain what is correlation and how it works so your grandpa (or grandma or someone that is of that age that doesn't know much about statistics) can understand.  Maybe come up with a simple bivariate example.  
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+# O-well
+
+## Data Dictionary (10 points)
+
+Build a dataframe with four columns:  variable, property, units, description...  For columns 14:54
+
+e.g., "pH", "hydrogen", "log scale", "potential (power) of hydrogen"
+e.g., "Eh", "electric", "milliVolts", "Redox"
+
+```{r}
+# -- INSERT CODE HERE --
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Distance
+
+```{r}
+library(geosphere);  
+library(measurements); 
+library(pracma); 
+
+names(wells.df);
+```
+
+```{r}
+d1 = as.matrix ( dist( wells.df[,55:56], 
+             method="euclidean", diag=TRUE, upper=TRUE) );
+```
+
+### Student Response [d1] (5 points)
+
+Describe what is going on above.  What is `library` doing?  What is `names` doing?  What is `d1` doing?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+```{r}
+d2 = conv_unit(  distm( wells.df[,3:2], fun=distGeo) ,  "m", "mi");
+```
+
+### Student Response [d2] (5 points)
+
+Describe what is going on above.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+```{r}
+sum( d2 - d1 ) / (nrow(d2) * ncol(d2));
+```
+
+### Student Response [sum] (5 points)
+
+Describe what is going on above.  Given the nature of our "o-well" locations, is Euclidean sufficient?  How much better is the `?distGeo` method.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Distance Clusters
+
+Select which "distance" form you are going to use: `d1` or `d2`.
+```{r}
+whichD = as.dist(d1); # convert matrix to dist "class"
+```
+
+```{r}
+latlon.hclust = hclust(whichD, method="complete");
+plot(latlon.hclust, main="Latitude/Longitude (complete)");
+```
+
+```{r}
+latlon.hclust = hclust(whichD, method="ward.D2");
+plot(latlon.hclust, main="Latitude/Longitude (ward.D2)");
+```
+
+
+### Student Response (5 points)
+
+Why should you run these two different methods as suggested above?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+Select how many clusters you think are in the data based on "longitude" and "latitude".
+```{r}
+numberClusters = 3;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Metals EigenRank of Wells
+
+```{r}
+# names(wells.df);
+metals = wells.df[,14:28];
+  rownames(metals) = wells.df$well;
+# metals;
+WM = as.matrix(metals);
+MW = transposeMatrix(WM);
+WW = WM %*% MW;
+
+metalRank = matrix.computeEigenRank(WW, "power", "max-100", pow=22);
+metalRank;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Metals EigenRank of Wells (Scaled)
+```{r}
+# names(wells.df);
+metals.s = scale(wells.df[,14:28]);
+  rownames(metals.s) = wells.df$well;
+# metals.s;
+WM = as.matrix(metals.s);
+MW = transposeMatrix(WM);
+WW = WM %*% MW;
+
+metalRank.s = matrix.computeEigenRank(WW, "power", "max-100", pow=22);
+
+metalRank.s;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+```{r}
+cor(metalRank, metalRank.s);
+```
+
+### Student Response (5 points)
+
+Does the correlation surprise you?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+Write code that builds these two outputs in a side-by-side dataframe, aligned by wells.
+
+```{r}
+# -- INSERT CODE HERE --
+# metalRank;
+# metalRank.s;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+When you compare the results side-by-side, what do you notice?  What did the "scaling" do to the resulting "eigenRank" data?  Why would it be best to use the "unscaled" version?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Chemistry EigenRank of Wells
+
+```{r}
+# names(wells.df);
+chemistry = wells.df[,32:41];
+  rownames(chemistry) = wells.df$well;
+# chemistry;
+WC = as.matrix(chemistry);
+CW = transposeMatrix(WC);
+WW = WC %*% CW;
+
+chemistryRank = matrix.computeEigenRank(WW, "power", "max-100", pow=22);
+chemistryRank;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Chemistry EigenRank of Wells (Kitchen Sink)
+
+Everything from Table 2
+```{r}
+# names(wells.df);
+chemistry.k = wells.df[,29:48];
+  rownames(chemistry.k) = wells.df$well;
+# chemistry.k;
+WC = as.matrix(chemistry.k);
+CW = transposeMatrix(WC);
+WW = WC %*% CW;
+
+chemistryRank.k = matrix.computeEigenRank(WW, "power", "max-100", pow=22);
+chemistryRank.k;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+```{r}
+cor(chemistryRank, chemistryRank.k);
+```
+
+### Student Response (5 points)
+
+Does the correlation surprise you?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+Write code that builds these two outputs in a side-by-side dataframe, aligned by wells.
+
+
+```{r}
+# -- INSERT CODE HERE --
+# chemistryRank;
+# chemistryRank.k;
+```
+
+Is the ranking between `chemistryRank` and `chemistryRank.k` much different? 
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Geology EigenRank of Wells
+
+```{r}
+# names(wells.df);
+geology = wells.df[,8:13];
+  rownames(geology) = wells.df$well;
+# geology;
+WG = as.matrix(geology);
+GW = transposeMatrix(WG);
+WW = WG %*% GW;
+
+geologyRank = matrix.computeEigenRank(WW, "power", "max-100", pow=22);
+geologyRank;
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+Looking at the "map" of the "o-well" PDF, why would Well-2 be the highest ranked on this "geology index"?  Why would Wells-(6,7,9,10,12,13,14,15) all have basically the same lowest ranking?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+Write code that computes the eigenRank of the "transpose" of the geologyRank.
+
+
+```{r}
+# -- INSERT CODE HERE --
+```
+
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Student Response (5 points)
+
+Which geology ranks the highest?  lowest?  why?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 5 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Final Clustering (o-well)
+
+### Data Reduction Analysis (5 points)
+Let's look at just a few of the variables.  In the following order, build a dataframe `wells.final`:
+
+- well
+- lat.mi/lon.mi
+- altitude.mi
+- sea.mi
+- fault.mi
+- pH
+- SAR, Na.per, RSC
+- Wilcox.C / Wilcox.S
+- metalRank
+- chemistryRank
+- geologyRank
+
+```{r}
+# -- INSERT CODE HERE --
+```
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Correlation Analysis (10 points)
+
+Perform a correlation analysis on `wells.final`, print the correlation matrix, and visualize the results.  
+
+```{r}
+# -- INSERT CODE HERE --
+```
+
+Describe in detail your findings.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Final Clustering (15 points)
+
+Perform a final clustering using `wells.final` or any other subset you choose from `wells.df`.
+```{r}
+# -- INSERT CODE HERE --
+```
+
+Describe in detail your methods and findings.  What variables did you put into your final `hclust`?  Why? How many clusters did you choose?  Why?
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+-- WRITE SOMETHING HERE --
+</pre>
+
+[This is worth 15 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct and references to "lecture" concepts or examples is a demonstration of mastery.]
+
+<HR divider="5" style="border: 5px solid #981e32; border-radius: 5px;">
+
+# May I coach you?
+
+Providing a "411" based on my experiences and life perspectives give you an opportunity to see how I mix multivariate data into an informed opinion.  You don't have to agree with my opinion, but it gives you a look "under the hood" about how an opinion can be formed.
+
+- Good data analysis tries to remain objective
+- Good data analysis tries to see multiple perspectives 
+- Good data analysis tries to see multiple scales
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Situation
+
+The situation has been that a cluster of students were raising concerns about the lack of linearity in the course, that writing was required, that we have to use pen-to-paper notebooks, that we have to use R notebooks, that "nothing is being learned".
+
+- Are the concerns quantifiable?
+- How can you categorize them?
+- Is there an underlying "latent variable" associated with the complaints?
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Task
+
+My initial task was to try and make sense of what was going on. 
+
+### History
+Based on my teaching experience, when a student complains "behind the instructor's" back but not directly to the instructor, this is a signal that the "complaint" is a straw-man.  The root of the problem is that there are institutional segment-faults inherent to the learning environment.  
+
+Likely, some students may dislike the instructor based on one or more immutable characteristics but are searching/fishing/hunting for a justifiable reason.  These characteristics include:
+
+- The instructor is a white male with conservative values.
+- The instructor is a strong, sober mind that likes to solve problems in order to help people.
+- The instructor has a D-4 personality:  <https://myprofiletraits.com/report/monte_shaffer@wsu.edu/p-600a26a561e45/>
+- The instructor never has nor ever will "bow to the mob of mediocrity".
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Deep Self-reflection
+A good instructor should always be self-aware and review what is transpiring.  If there are pedagogical reasons the students are not learning, those should be carefully considered.  
+
+Since I have not taught at university for about 8 years, I decided to make certain I was reading the "tea leaves".  I asked the question "May I coach you?" and several of you volunteered feedback.  I listened carefully to your feedback and currently conclude:
+
+- Those with software-engineering as a background find the course straightforward, enjoyable, and a bit easy.
+- Those with some background in computer science (e.g., in the data analytics program) find the programming a bit challenging, but enjoy what they are learning as they see its potential application for their future.  They appreciate the digital notebooks.
+- A few with little programming experience after some significant up-front work, feel comfortable and confident in the process.  They feel "empowered" and "enabled" and see how it can benefit them in their current internships/jobs or in a potential future career in data analytics.
+
+These students would be typically classified as the "voiceless"; that is, they are not the type to "complain" but wanted to counter the "nebulous" voices with their perspectives.  They recognize:
+
+- The expectations of the course have been clearly outlined.
+- The intentional vaguities lead to potential creative outcomes.
+- The instructor is willing and able to offer assistance as needed.
+- As self-directed learners, if assistance is not needed, they begin working on their own.  
+- Some have never attended office hours.  Others have attended once to overcome a single technical hurdle.  Others have attended several times to "get" the protocols and have since attended less frequently.  And some attend office hours for "socializing".
+
+
+When asked about why others would claim "learning is not happening", they responded:
+
+- Maybe the students don't have the technical skills.
+- Maybe the students should ask for help.
+- Maybe the students should collaborate with their team members (maybe an "engineering" student should be put on each of the teams).
+- Students are "used to" ... [list of items that "commisserate" with possible reasons for complaints]
+
+Certainly there are a few things I identify as not perfect in my design.  The most obvious is that instead of doing the "longitudinal" direct feedback for my students at midterm and at the final, I should do it three times in the semester.  The concept of "fileting the salmon" instead of "steaking the salmon" is the reason I do grading the way I do.  It is intentional.  It places the focus on the student's evolution and progress.  And it downplays the importance of grades as it tries to "up-play" the importance of learning.
+
+My design is not perfect.  The implementation of my design is not perfect.  I am not perfect.  This is the essence of humanity.  We are not perfect, but intentions are fair, transparent, and consistent.
+
+Fundamentally, my self-determined approach is very foreign to students who have been systematically forced to comply to erroneous external controls their entire educational lives.  The early lecture and video from Ryan about "intrinsic motivation" was intended to help "wake up" students and let them know that regardless of their race, gender, or political affiliation:  (1) they have infinite worth, (2) they have infinite potential, (3) the limitations of their future is merely a solid educational foundation.
+
+Students yearn to feel that have infinite potential.  In an current skill assessment, I posed the question:  "Do you have a superpower?  If so, what is it?  If not, what would it be?"  This question I have asked all young people I have hired over the past few years.  The responses of this student group was very different that I have ever seen before.  Three themes came up: (a) students want to dilate or reverse time so they can get more done, (b) students want to fly or teleport to make transportation more efficient, (c) students want to communicate without having to use words.
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Is learning occuring?
+
+The short answer is YES.  Learning is occurring.  
+
+I am being told (albeit indirectly) that I should "dumb down the course" as it is "too much" or "too intense."  I listen to this suggestion, apply its correlation to the objective I have intentionally designed, and conclude that it does not align with my teaching philosophy or paradigm.
+
+<https://en.wikipedia.org/wiki/Blind_men_and_an_elephant#The_meaning_as_proverb_by_country_or_domain>
+
+If I "teach to the mediocre" average of the course, I am hindering the "outliers" that will be the innovators and creators of the future.  Preparing students for the real world is pushing them out of their comfort/expectation zone.  My design is intentional.  The consequence of this design principle is a bit of complaining.  
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Life energy and Karma
+
+In ancient traditions "karma" or "qi" refer to the state of a person's outlook regarding life energy.  Negative energy breeds negative energy and outcomes.  Likewise, positive energy breeds positive energy and outcomes.  
+
+One student last semester used very negative language (which we will analyze using multivariate techniques in the near future):  "I hate everything about this class.  The nonlinear approach drives me crazy.  It reminds me of my boss."
+
+This example demonstrates a person with some negative energy.  Often, we people feel like they have lost control of their lives ("locus of control"), they lash out at those that are trying to help them.  They try to "control" those helping.  Maybe a personal event in the student's life; maybe COVID in general.  Some of the reasons may be unknowable.  Regardless, negative energy begats negative energy.  
+
+That student has every right to express an opinion.  And be angry at the world.  That does not require me to absorb that negative energy or agree with that opinion.  As the student is self-determined, so am I.
+
+Albeit negative in tone, I am "listening for" how the feedback aligns with my primary objective.  
+
+Certainly negative energy interrupts my creative flow and stymies my productivity.  If all parties could accept their temporary roles as associated with this course and its expectations, more creative energy could be devoted to improving the tools/notebooks that I am developing for my students.
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### Being Present
+
+I believe in the concept of letting the river of life take you to the moment and being present therein.  I am grateful for this opportunity given many of the job openings vaporized with the arrival of "COVID."  And I took the opportunity to improve my R skills as I had some focused time to think about what "tools" can I leave my students based on my skillset.
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Current 411
+So what is my analysis of the problem?  I see it as a systematic problem.  I am just a cog in the system.  Through my intentional actions, I am exposing the flaws of the system.  
+
+
+### Titanic Metaphor
+We will apply the "official narrative" of the sinking of the Titanic to WSU.
+
+- The university was struck by an iceberg when the "west-side" liberals (regents) chose *NOT* to continue the legacy of Lane Rawlings. (I have never met Lane but learned that I replaced him as the Sunday School teacher in a Pullman religious community when I began my Ph.D. program in 2007.)  Lane spent nearly a decade trying to shift the image of WSU from the "party school WAZZU" to "world class - face to face".  The "heir apparent" was someone on his team that had the ability to keep that momentum moving forward, but political forces had a different agenda.  An as always:  choices have consequences.
+- The selected president within a week undid the "prepare students for the real world" agenda.  He literally called together a group of student-athletes (baseball team), spent 10 minutes with the students asking if we should just go back to the "party school WAZZU", and moved forward with that agenda.  One of my students was in the room and shared this personally to me.
+- University presidents have one job to do.  That job is to raise money.  Lazy university presidents seek opportunities to "micromanage" to avoid their primary responsibility.  And most of them rob money from some departments to cover this "shortfall".  At most universities, the "business" schools and the "math" departments get shorted.  Based on any measure of performance-based budgeting (the number of "butts in seats" in courses offered within a teaching unit), these departments should have ample budgets.
+- University leadership, generally the provost, puts the squeeze on these departments to do more with less.  As a result, hiring freezes occur, those reading the "winds of change" abandon ship, and the teaching quality suffers.  Then students get frustrated with the situation.  Then teaching regresses to the worst possible objective function:  "have the students 'perceive' they learned something so an instructor maximizes teacher ratings."  The lack of respect spins the tit-for-tat negativity in a downward spiral.  Over time, the students now drive the ship.  It's a sinking ship, but they are in control.
+- The current university president is trying to reestablish a standard of quality with his "drive for 25" initiative but without the financial resources, and with the current state of the university, it is a failing endeavor.  So to stay up-to-date and relevant, he tweets nonstop to show that he is "hip" with the youngsters and is "woke".  My perspective is that he means well, but he "bowed to mob" and now has to live this new, introjected self.  He himself also gets caught in precarious situations:  in one breath, he proclaims the math department has to cut deeper (another \$250,000).  In a second breadth, he says he got a loan from the NCAA to pay the football coaches (\$3M).  This drives faculty moral even lower.  You care about football, but not math.  A simplistic interpretation, but not altogether incorrect.
+- The biggest change I have seen is the GIRL-POWER movement.  This year, I have sat in several ZOOM meetings and notice I was the only caucasian on the call.  And often, the only male on the call.  The "legacy" generation of staff have been beyond kind and courtesy to me.  But that generation is retiring.  There have been times through facial expressions or verbal language, I have been belittled for my positions as "how could I know what the world demands."  Well, the answer is simple:  do market research and analyze the problem.  Simple "gender studies" will demonstrate this inequity in the hiring process across all university positions.  Other times, I am on a call with only MALE participants and the nature of the call shifts altogether.  These MEN who keep their opinions to themselves in the GIRL-POWER phone calls, do openly express themselves.  This suggests that they are well aware of the current climate of university life. 
+- The non-vocal conservative students, parents, and donors see through this "PR propaganda" and begin to abandon ship "Why would I pay to support a university that does not allow my voice to be heard?"  Enrollment is down this semester 20% and will continue to fall.  It is not about COVID.  It is a result of the systematic error in the system.  "Woke" politics meets "economic" realities.  It is only a matter of time. 
+
+This is not a WSU-only phenomenon.  It is a system-wide crisis in higher education.  The old systems are failing because in their "wokeness" they drove out the "academic equality" of the conservative class of citizens.
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### A New Hope
+The universities are collapsing under their own weight.  The idea of freedom of speech and inclusion is relevant if you speak words they approve of.  If you are white and conservative your voice is shunned and disdained.  
+
+- I see our course as a microcosm of the realities of the "polarized" world we live in.  The vocal "woke" crowd versus the "unspoken" voice of the conservatives.  There is a "swing group" that tries to bring harmony.  Several of you (my students) that talked with me had this mentality of trying to problem solve and find unity.  This is the beacon of hope.
+
+- I consider Jodie Foster.  A famous actor (actress) that has very liberal views.  In her youth, she was a vocal, liberal activist.  One of her crazed fans shot a sitting U.S. President.  She reflected and toned down her rhetoric.  She current lives her own self-determined lifestyle, which is her right and privilege as a member of the human race.  At some point, likely 1997 when the movie "Maverick" was filmed, she met Mel Gibson.  He can easily be defined as the policital opposite of Jodie.  Very conservative views.  Possibly extreme.  But this is the story of hope.  These two people have developed an amazing friendship.  They respect that they don't agree but can appreciate and learn from each other regardless.  
+
+- In one movie (1997 Contact), Jodie plays the part of a scientist.  During a selection process to become the first to travel to a distant star with intelligent life (which she discovered), for "political reasons" she is not selected.  She is not selected because she didn't say the politically correct words.  When challenged on the harsh realities of "political expedience", in the film, her character responds: "I thought the world is what we make of it."
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+### True "wokeness"
+One day soon, this introjected "wokeness" will be replaced by a true "wokeness".  Jodie's and Mel's of the world will work together and build a new world.  A world that respects all of humanity.  A world of harmony.  A world of renewal.  And that revolution will start (as it always does) with the youth.  Consider the French Revolution of 1795.  Read "Les Miserable" or watch the play on Broadway, or even watch the Liam version of the movie.  
+
+Mel Gibson played a famous Scottish clansman "William Wallace" in the 1995 Braveheart.  Historically, the movie is a trainwreck.  But the themes of FREEDOM and LIBERTY reasonate with every citizen of humanity.  It is in our anthropological DNA as humans to be "LIBER" <https://en.wikipedia.org/wiki/Liber>, which is the root for the word "LIBERAL".  Can I be both conservative and liberal?  That seemingly perplexing conundrum is the foundation of this new hope.  If Mel Gibson and Jodie Foster can get along, can't we all?
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Concluding Remarks
+
+I personally seek positive outcomes.  I have a long-game temporal disposition.  I don't enjoy negative energy, but at times I am not afraid to listen to the negativity and assess why it is coming.  I cannot control anyone but myself.  I cannot control others or their perceptions.    
+
+As I shared before in the lecture "May I coach you", I am present because I care.  I care for all of my students.  I am no respecter of persons.  That means I try to treat each learner as an individual with INFINITE worth.  I seek to serve my students based on my understanding of what they NEED (which is not necessarily what they perceive they NEED).  I try to align with them on their path of self-discovery and ask them how I can help them become the best person they can be.  I likely have a slight internal bias.  I do tend to naturally gravitate to those defined as the "have nots" by the upper social stratification.
+
+I faced tragedy at a very young age.  And I embrace it.  It defines my humanity.  I went to bed hungry at times in my childhood.  It defines my humanity.  And I embrace it.  I worked hard in school as a student because I believed in the American dream.  I consider myself a self-directed, life-long learner and that framework has enabled me to create and innovate.  That is, I try to practice what I preach.  I have had many learning opportunities and appreciate each one.  Most especially, I appreciate those instructors that saw my intellectual talents and made individualized efforts to help refine them.  They shared a piece of their soul with me in their instruction, and that has enlarged my soul and enlightened my understanding.
+
+So my voice is calling for healing and honor and respect.  Respect for everyone.  Respect for all students.  And respect for the instructor as a learner/teacher that has designed this course with specific objectives.
+
+So again I ask "May I coach you?"
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## What's next
+First, I do apologize that I am focusing so much energy on this topic.  At this moment in time and space, I feel compelled that it needs to be addressed in a transparent way.  I am trying to be objective as a data analyst, but that is for you to decide.
+
+I have every intention to complete this semester based on the expectations I have outlined since the course began.  As a self-determined individual, I will fight for each student's right to have a voice.  
+
+I am here in this moment and must be present.  If "all voices" are to be heard, is not my voice as an instructor also relevant?  
+
+If THEY need a "sacrificial lamb", a "brilliant white goat" to continue ESCAPING from the inevitable future, so be it.  I would prefer to take accountability and responsibility for my own choices and actions.  
+
+THEY control many in this university through their tactics of fear and bullying.  I may stand alone, but I stand alone for my students.  All of my students.  Even those that may despise me and my teaching methods.  
+
+I stand for my dear math colleagues that have been shackled with this "woke" expectation:  comply or else.
+
+- My colleagues are academics.  They chose this profession because they like  to research and contribute to society in the safety of the "ivory tower".
+- My colleagues are of a different generation.  This idea of using digital notebooks and teaching statistics in such a technology-driven, applied way is  different from their traditional theoretical frameworks.  It is very foreign to them.  The language I use in class is foreign to them.  Everything I am doing is foreign to them.
+- My colleagues have only had leadership/management opportunities within the institutional forces of university.  In fact, many of these "service" roles are forced upon them as budgets are shrinking.
+
+THEY are harassing my "colleagues" in the math department unfairly.  My message is simple:  'I have a right to have a voice.  Stop bullying those that disagree with your opinions.  If you have concerns with me, bring those concerns directly to me.  Your bullying of my colleagues to get to me is both unprofessional and disingenuous.'
+
+<HR divider="1" style="border: 1px solid #981e32; border-radius: 1px;">
+
+## Why we do what we do
+
+The book by Ryan/Deci called "Why we do what we do" I have purchased 8 times according to Amazon.  It is a gift I have shared with many people in my life.  Originally published August 1, 1996, this book discusses the importance of living a FREE and TRUE life:
+<https://www.amazon.com/Why-We-What-Understanding-Self-Motivation/dp/0140255265>
+
+I stand here for my son.  My son will forever know that his daddy believes and tries to practice every word that he teaches his son.  Whether it be a lesson about mathematics or a lesson about humanity.  I do ALL of this most especially for my son:  <https://ramblings.mshaffer.com/wp-content/uploads/2017/09/Alex-golf.jpg>
+
+I also do this for my daddy.  A man that instilled in my the principles of integrity, honor, and love for humanity.  He was my 7th/8th grade mathematics instructor and many of the "quirks" of my classroom are an evolution of my understanding of math learning that started so many years ago.  I am grateful that he exchanged easement rights of our property to Peter Tracy and the neighboring golf course for an amber-screen Intel-286 computer circa 1984.  What an important investment in my life.  He is the logician in my DNA and my mama was (is) the creative in my DNA.  I am 'Monte from Montana' because of them.
+
+## Tides of Change
+
+The system will naturally collapse, and a new system will emerge.  We will "one day" design that new system.  A system of true, authentic learning.  A system where the ancient wisdom of the "great nations" will be restored.  A system of all voices being heard, not just the echo chambers of one political viewpoint.  A system where my innovative teaching methods will be measured as worthy using meritocracy standards:  (1) is the instructor knowledgeable in the domain, (2) does the instructor have insights based on intellectual acumen or real-world experience, (3) can the instructor enable students to be self-directed learners so that they can become the "true" innovators of the future?
+
+It is a beautiful future, but it will not happen today.  We have to stand quietly in place without kneeling to the mob.  Let the negativity naturally dissolve away so we can build a new world.  Like a phoenix rising from the ashes.  Or a snake shedding its skin.  
+
+Finally, if THEY fire me for "insubordination", I will try and finish the semester by posting notebooks/videos for you (all of my students) outside this failing university system.  
+
+
+-- 
+
+
+monte
+
+{x:
+
+
+-----------------------------------
+Monte J. Shaffer
+Ph.D. Marketing
+M.S. Statistics
+M.B.A. Marketing Research
+B.A. Mathematics (minors Physics/Spanish)
+
+(509) 592-7592
+<monte.shaffer@gmail.com>
+<http://www.mshaffer.com/arizona/>
+
+# Quote and Reflection
+
+As today is 3/14 (which we call PI day), I felt like today's quote should belong to Albert Einstein, born March 14, 1879:  "Great spirits have always suffered violent opposition from mediocre minds."
+
+## Student Response (10 points)
+
+Please reflect on this "midterm" learning opportunity.
+
+<pre style="font-weight: bold; font-family: monospace; white-space: pre-wrap; background-color: #717171; border: 2px solid #981e32;">
+Personally, I actually found myself enjoying this style of midterm. While I will admit that it took a while and forced me to re-watch some of the previous lectures, I like that I was able to 1.) take my time on it. And 2.) relearn/re-implement some of the things that have been done throughout the semester. I would say that this type of midterm did take longer than other midterms I have done that were "math-related" but I am not personally opposed to that. As long as I have the time, which was provided. Also, I really liked that it was broken down into really tiny chunks so that you could finish one and move on to the next task. It makes it feel more managable than one long problem with multiple parts. Last, I feel like it covered the overall topics of the semester (up to this point) really well. 
+</pre>
+
+[This is worth 10 points.  Length of the response should demonstrate your understanding of mastery.  Too verbose is better than too succinct.]
