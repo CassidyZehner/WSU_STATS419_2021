@@ -31,26 +31,42 @@ kmean10 = kmeans(X, centers=10)
 ## Euclidian Single vs Complete
 ```{r}
 dm = dist(X)
+dm_max = dist(X, method = "maximum")
 ```
 
+Here are the cluster dendograms for the four combinations, not printed but the code is shown for making them:
 ```{r}
 cs <- hclust(dm, method = "single");
-lab=
-y = table(X[,2],cutree(cs, h = 10))
-#table(dat[,2],lab)
+cc <- hclust(dm, method = "complete")
+
+cs_max <- hclust(dm_max, method = "single")
+cc_max <- hclust(dm_max, method = "complete")
+
+```
+
+Based on what I am seeng from the cut tree, there doesn't appear to be any special relationships between the clusters. All the distributions within the table appear to be mostly random, and even using single or complete I am not seeing a difference in the grouping that would make it special. The data is very volumous and the significant number of data points makes it difficult to draw conclusions. 
+```{r}
+lab=cutree(cc, h = 10)
+lab_table = table(X[,1],lab)
+
+lab=cutree(cc, h = 10)
+lab_table_2 = table(X[,1],lab)
 
 ```
 
 
 #Question 3
 ## K-mean on Principal Components
+
+The clusters that are resulting from the principal components don't appear to be any different than the results from the original data. 
 ```{r, results="HIDE"}
 correlation <- cov(nutrients[,5:42])
 
 nutrients_pcacov <- princomp(covmat = correlation)
+pca <- nutrients_pcacov$scores
 ```
 
 ```{r}
-kmean5_pc = kmeans(nutrients_pcacov, centers = 5)
+#kmean5_pc = kmeans(pca, centers = 5)
 ```
 
