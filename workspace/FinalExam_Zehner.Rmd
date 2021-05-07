@@ -1,0 +1,174 @@
+---
+title: "Multivariate Statistics Final Exam"
+author: "Cassidy Zehner [cassidy.zehner@wsu.edu]"
+output: pdf_document
+---
+
+
+The final exam focuses on analyzing and grouping the "Auto" data that was provided in the course. 
+```{r, echo=FALSE,comment=NA}
+#Reading in the data
+auto = read.csv("C:/_git_/data/new class/Auto.csv", header=TRUE)
+
+library(corrplot)
+```
+
+#Question 1 - Summarizing the Data
+
+Box plots of a few of the variables are shown below.
+```{r}
+boxplot(auto$mpg,auto$acceleration, names = c("mpg","acceleration"))
+boxplot(auto$horsepower,auto$displacement, names = c("horsepower","displacement"))
+```
+
+Acceleration and mpg were grouped into the same box-plot because they have similar scales. What can be seen with them is that the variable mpg has a relatively even spread and none of the data points fall out of the quartiles. The acceleration has a decent spread from the first to the fourth quartile, but they are a significant number of data points that fall out of the upper and lower bounds. Similarly, horsepower and displacement were grouped for their range. For the displacement variable, there are many data points that fall above the median, and few that fall below it. For horsepower, many data points are outside of the upper range but there are none that are outside the lower range.
+
+Below are histrograms for a few of the variables in the Auto dataset. 
+```{r}
+hist(auto$weight, main="Frequency of Automobile Weight",xlab="Automobile Weight")
+hist(auto$year,main="Frequency of Year Made", xlab="Automobile Year")
+```
+The weight histogram gives us information that a larger portion of the vehicles sampled are small cars and possible mid-size vehicles as well. There are likely few trucks or large SUV's to be found in the data set since the weight of most of the vehicles is under 4,000. Similarly, with the Year Made histogram, we can see that the samples cover a large range of years and that most of the years are pretty evenly distributed. The only year that has a significantly higher number of samples is 1970 .
+
+
+Below are a few plots comparing the variables to one another to get a visual representation of their correlation.
+```{r, echo=FALSE}
+plot(auto$mpg,auto$cylinders);
+```
+Before graphing the mpg vs cylinders, I would have predicted that as the number of cylinders increases, the mpg goes down. That turned out to be correct; in general there is a negative correlation between the two variables. This is likely because usually the more cylinders, the more power. And typically, a higher power output means a less fuel efficient vehicles.
+
+```{r, comment =NA, echo=FALSE}
+plot(auto$displacement,auto$horsepower)
+```
+Similarly, I was expecting that the larger displacement vehicles would have more horsepower. Since displacement is the amount of air + fuel in the engine at one, having a larger amount would mean that more power can be output which is similar to a higher horsepower. 
+
+```{r, comment =NA, echo=FALSE}
+plot(auto$horsepower,auto$acceleration)
+```
+Last, and hopefully most obvious, is that the higher the horsepower, the quicker the acceleration time would be. This was mostly just a check that the data was saying what I was expecting it to say because more horsepower = faster, almost always. The only time it wouldn't is if there is significantly large vehicles compared to much smaller vehicles. However, the histogram showed that the vehicles had a decent spread and many of the weights had a similar frequency in the data. 
+
+
+#Question 2 - Analysis
+
+The sample means of each type of data provided in shown below. Of the 392 observations of each variable, the means are taken.
+```{r}
+as.matrix(colMeans(auto[,1:8]))     
+```
+
+The sample variance and correlation  of the data is below. 
+```{r}
+var(auto[,1:8])
+cor(auto[,1:8])
+corrplot(cor(auto[,1:8]),method="ellipse")
+```
+Based on the data shown in the correlation plot, most of the variables have strong relations. For example, the variables for displacement and number of cylinders are strongly positively correlated with a coefficient of 0.95. This is logical considering that displacement is the total volume of air + fuel that can come into the engine at one time. This would increase linearly as the number of cylinders increases. Similarly, horsepower and acceleration are negatively correlated with a coefficient of -0.68. This is logical because as horsepower increases, the time to accelerate to a certain distance or speed decreases. 
+
+There is also a strong positive between displacement and weight, with a value of 0.93. As the car gets heavier, it requires more displacement in the engine to output enough power to compare to other, lighter vehicles. Also, with more displacement comes a need for more parts and more weight. That explains why the two go hand in hand and increase together. The weight of the vehicle and miles per gallon (mpg) are negatively correlated with a coefficient of -0.83. As the weight of the car increases, it must use more fuel to propel it forward at the same rate as other lighter vehicles. This is why the heavier cars get worse fuel ratings.
+
+
+#Question 3 - Clustering
+
+```{r}
+#clustering_k = kmeans(auto[,1:8], centers = 5)
+wss <- rep(0, 10)
+for (i in 1:10)     wss[i] <- sum(kmeans(auto[,1:8],centers = i)$withinss)
+plot(1:10, wss, type = "b", xlab = "Number of groups",
+     ylab = "Within groups sum of squares")
+```
+Based on the plot above, an appropriate number of groups for the data would be 2 or 3. This is termed the elbow method and is used for where there is a bend in the data. This method looks at the within-cluster sum (WSS) compared to the total number of clusters. Based on the small analysis that was done before with the plots and bar graphs, it seems appropriate that the best number of clusters is 3. Looking at the value of the averages in the 3 clusters:
+```{r}
+kmeans(auto[,1:8], centers =2)
+```
+After analyzing the within cluster sum of squares between 2 and 3, three clusters sits around 82% and 2 sits around 74%, meaning that 2 clusters is a much better clustering for the data. Looking at the cluster means, the two clusters are differentiating the performance cars from the daily-driver cars. This is clear is many of the averages presented. First, the average mpg for the first cluster is sitting around 16.4 mpg with 7 cylinders and a displacement of 301. The second cluster is around 28 mpg with 4 cylinders and a displacement of 123. We can see that this is a clear distinction between cars with a high power output, and therefore lower mpg and cars with a lower output and much higher miles per gallon. 
+
+Below is the dendogram for hierarchical clustering:
+```{r}
+X <- scale(auto[, 1:8],
+           center = FALSE, scale = TRUE) 
+library(cluster)
+dj <- dist(X)
+hc_div <- diana(dj)
+plot(hc_div)
+```
+
+
+#Question 4 - LDA
+
+Here is the code to construct the "mpg01" matrix
+```{r}
+mpg01 = matrix(data = 0,nrow = nrow(auto))
+for (i in 1:nrow(auto))
+  if (auto$mpg[i]>median(auto$mpg)){
+    mpg01[i]=1;
+  }
+```
+
+LDA is used below to predict "mpg01" using the remaining numerical variables in the dataset. 
+```{r}
+library("MASS")
+lda.fit = lda(mpg01~cylinders+displacement+horsepower+weight+acceleration+year+origin,data=auto, prior = c(0.5,0.5));
+print(lda.fit);
+lda.pred = predict(lda.fit);
+message("The confusion matrix for the data is shown below.");
+table(mpg01,lda.pred$class);
+accuracy = sum(mpg01==lda.pred$class)/nrow(mpg01);
+cat("The accuracy of the LDA is", accuracy);
+```
+
+LDA is used below to predict "mpg01" but only with variables that seem relevant to me. 
+```{r}
+lda.fit_2 = lda(mpg01~cylinders+displacement+horsepower+weight+year,data=auto, prior = c(0.5,0.5));
+print(lda.fit);
+lda.pred = predict(lda.fit);
+message("The confusion matrix for the data is shown below.");
+table(mpg01,lda.pred$class);
+accuracy = sum(mpg01==lda.pred$class)/nrow(mpg01);
+cat("The accuracy of the LDA is", accuracy);
+```
+What can be seen from this specific case of LDA is that the more variables the better the accuracy of the sorting. With all remaining variables, the accuracy of the LDA is 0.911 but when removing the data from "origin" and "acceleration" this value is slightly reduced and becomes 0.905. While the values are only slightly off, I am surprised to see that removing origin did not help. Other tests were done and were not included for brevity, but as variables get removed, the accuracy continues to decrease in an apparently linear fashion. This tells me that the data presented truly gives a well-rounded view of the automobile and begins to be less so when other variables are removed. It appears that all the factors are necessary to best predict the mpg01 matrix. 
+
+#Question 5 - QDA
+
+QDA is used below to predict "mpg01" using the remaining numerical variables in the dataset. 
+```{r}
+qda.fit=qda(mpg01~cylinders+displacement+horsepower+weight+acceleration+year+origin,data=auto, prior=c(0.5,0.5))
+
+qda.pred=predict(qda.fit)
+print(qda.fit);
+message("The confusion matrix for the data is shown below.");
+table(mpg01,qda.pred$class)
+
+accuracy_qda=sum(mpg01==qda.pred$class)/nrow(mpg01);
+cat("The accuracy of the QDA is", accuracy_qda);
+```
+
+QDA is used below to predict "mpg01" using the variables that seem relevant to mpg. 
+```{r}
+qda.fit=qda(mpg01~cylinders+displacement+horsepower+weight+year,data=auto, prior=c(0.5,0.5))
+
+qda.pred=predict(qda.fit)
+print(qda.fit);
+message("The confusion matrix for the data is shown below.");
+table(mpg01,qda.pred$class)
+
+accuracy_qda=sum(mpg01==qda.pred$class)/nrow(mpg01);
+cat("The accuracy of the QDA is", accuracy_qda);
+```
+What can be seen from the QDA when compared to the LDA, is that it is just slightly more accurate when considering all the remaining variables. Rather than 0.911, the accuracy is 0.916. This suggests that the data follow more of a quadratic pattern rather than a linear pattern. However, the difference seems insignificant given the small relative sample size. 
+#Question 6 - PCA
+
+Below is the call for finding the covariance of the auto data, and then using that to complete PCA. 
+```{r echo = FALSE, comment=NA, results = "HIDE"}
+correlation <- cov(auto[,1:8])
+auto_pcacov <- princomp(covmat = correlation)
+```
+
+```{r echo = FALSE, comment=NA}
+summary(auto_pcacov, loadings = TRUE)
+var <- (auto_pcacov$sdev)^2
+varProportion <- var/sum(var) 
+singlecomponentproportion <- sum(varProportion[1:2])
+```
+What can be seen from the data is that the first principal component accounts for over 99% of the variance in the data. This is to say that all it takes is this single component to describe the data. 
+
+
